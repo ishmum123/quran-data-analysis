@@ -1,11 +1,16 @@
 from os import listdir, mkdir
 from os.path import isfile, join, exists
-import itertools
+from shutil import rmtree
 
-onlyfiles = [f for f in listdir('verses') if isfile(join('verses', f))]
+out_dir = 'chapters'
+in_dir = 'verses'
 
-if not exists('chapters'):
-    mkdir('chapters')
+onlyfiles = [f for f in listdir(in_dir) if isfile(join(in_dir, f))]
+
+if exists(out_dir):
+    rmtree(out_dir)
+
+mkdir(out_dir)
 
 dct = {}
 
@@ -18,10 +23,10 @@ for f in onlyfiles:
             dct[fs[0]] = [fs[1].split('.')[0]]
 
 for key in dct:
-    with open(join('chapters', str(int(key)) + '.txt'), 'w') as f:
+    with open(join(out_dir, str(int(key)) + '.txt'), 'w') as f:
         l = list(map(int, dct[key]))
         l.sort()
         for verse_num in l:
             vfn = str(verse_num) if verse_num > 99 else '0' + str(verse_num) if verse_num > 9 else '00' + str(verse_num)
-            with open(join('verses', key + '-' + vfn + '.txt'), 'r') as rf:
+            with open(join(in_dir, key + '-' + vfn + '.txt'), 'r') as rf:
                 f.write(str(verse_num) + '. ' + rf.read() + '\n')
